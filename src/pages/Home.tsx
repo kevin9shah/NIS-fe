@@ -1,7 +1,7 @@
 import { useState, useCallback } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { useNavigate } from 'react-router-dom';
-import { uploadDataset } from '../api/client';
+import { uploadDataset, loadDirectory } from '../api/client';
 import type { AppState } from '../App';
 
 interface Props {
@@ -14,6 +14,10 @@ export default function Home({ state, updateState }: Props) {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
     const [uploadResult, setUploadResult] = useState<any>(null);
+
+    // Form states for the new Directory Loader
+    const [dirPath, setDirPath] = useState('/Users/kabra_jay/Downloads/archive/Edge-IIoTset dataset/Selected dataset for ML and DL');
+    const [sampleFrac, setSampleFrac] = useState(1.0);
 
     const onDrop = useCallback(async (files: File[]) => {
         if (files.length === 0) return;
@@ -29,6 +33,21 @@ export default function Home({ state, updateState }: Props) {
             setLoading(false);
         }
     }, [updateState]);
+
+    const handleLoadDirectory = async () => {
+        if (!dirPath) return;
+        setLoading(true);
+        setError('');
+        try {
+            const res = await loadDirectory({ directory_path: dirPath, sample_frac: sampleFrac });
+            setUploadResult(res.data);
+            updateState({ sessionId: res.data.session_id });
+        } catch (err: any) {
+            setError(err.response?.data?.detail || 'Directory load failed');
+        } finally {
+            setLoading(false);
+        }
+    };
 
     const { getRootProps, getInputProps, isDragActive } = useDropzone({
         onDrop,
@@ -94,6 +113,46 @@ export default function Home({ state, updateState }: Props) {
                                 <p className="text-sm text-slate-500">or click to browse • CSV files only</p>
                             </>
                         )}
+                    </div>
+
+                    {/* New Auto-Loader UI for Edge-IIoTset (Very large datasets) */}
+                    <div className="mt-8 p-6 bg-card border border-border rounded-2xl">
+                        <h3 className="text-teal-light font-semibold mb-4 text-sm uppercase tracking-wide">Large Dataset Loader (Server-Side)</h3>
+                        
+                        <div className="space-y-4">
+                            <div>
+                                <label className="block text-xs text-slate-400 mb-1">Local Directory Path</label>
+                                <input
+                                    type="text"
+                                    value={dirPath}
+                                    onChange={(e) => setDirPath(e.target.value)}
+                                    className="w-full bg-dark border border-border rounded-lg px-4 py-2 text-sm text-slate-300 focus:outline-none focus:border-teal/50"
+                                    placeholder="/path/to/dataset"
+                                />
+                            </div>
+                            
+                            <div className="flex items-center gap-4">
+                                <div className="flex-1">
+                                    <label className="block text-xs text-slate-400 mb-1">Sample Fraction ({sampleFrac})</label>
+                                    <input
+                                        type="range"
+                                        min="0.01"
+                                        max="1.0"
+                                        step="0.01"
+                                        value={sampleFrac}
+                                        onChange={(e) => setSampleFrac(parseFloat(e.target.value))}
+                                        className="w-full accent-teal"
+                                    />
+                                </div>
+                                <button
+                                    onClick={handleLoadDirectory}
+                                    disabled={loading || !dirPath}
+                                    className="px-6 py-2 h-[42px] mt-4 bg-teal hover:bg-teal/80 text-white text-sm font-semibold rounded-lg transition-colors disabled:opacity-50"
+                                >
+                                    {loading ? 'Loading...' : 'Load Directory'}
+                                </button>
+                            </div>
+                        </div>
                     </div>
 
                     {error && (

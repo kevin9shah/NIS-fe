@@ -40,12 +40,18 @@ export default function Detection({ state, updateState }: Props) {
     const predictions = state.predictions || [];
     const summary = state.qttaSummary;
 
-    const chartData = predictions.map((p: any, i: number) => ({
-        index: i,
-        score: p.anomaly_score,
-        threshold: p.qtta_threshold,
-        isAnomaly: p.anomaly_score > p.qtta_threshold ? p.anomaly_score : null,
-    }));
+    // Downsample chart data to max 500 points to prevent Recharts SVG DOM crash on 240,000 test packets
+    const maxPoints = 500;
+    const step = Math.max(1, Math.floor(predictions.length / maxPoints));
+    
+    const chartData = predictions
+        .filter((_: any, i: number) => i % step === 0)
+        .map((p: any, i: number) => ({
+            index: p.index,
+            score: p.anomaly_score,
+            threshold: p.qtta_threshold,
+            isAnomaly: p.anomaly_score > p.qtta_threshold ? p.anomaly_score : null,
+        }));
 
     const filtered = filterLevel === 'ALL' ? predictions : predictions.filter((p: any) => p.threat_level === filterLevel);
     const paginated = filtered.slice(page * perPage, (page + 1) * perPage);

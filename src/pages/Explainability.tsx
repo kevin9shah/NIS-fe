@@ -12,30 +12,20 @@ interface Props {
 }
 
 const featureDescriptions: Record<string, string> = {
-    packet_size: 'Payload size in bytes. Very large or very small packets may indicate scanning or fragmentation attacks.',
-    inter_arrival_time: 'Time between consecutive packets. Unusually low values suggest high-rate flooding attacks.',
-    src_port: 'Source port number. Ephemeral ports with unusual patterns may indicate automated tools.',
-    dst_port: 'Destination port. Connections to ports 22, 23, 3389, 4444, 6667 are high-risk.',
-    packet_count_5s: 'Packets in last 5-second window. High counts suggest DDoS or brute-force activity.',
-    mean_packet_size: 'Rolling average packet size. Sustained low values may indicate reconnaissance scanning.',
-    spectral_entropy: 'Entropy in frequency domain of traffic flow. High entropy can signal encrypted C2 traffic.',
-    frequency_band_energy: 'Energy concentration in dominant frequency band. Anomalous patterns emerge in burst attacks.',
-    protocol_type_TCP: 'Protocol flag. Combined with port analysis reveals tunneling and protocol abuse patterns.',
-    packet_size_ratio: 'Ratio of packet size to rolling mean. Extreme values indicate abnormal packet characteristics.',
-    port_risk_score: 'Risk classification based on destination port (0=safe, 0.5=medium, 1=high-risk).',
-    entropy_energy_ratio: 'Spectral entropy divided by frequency band energy. Captures encrypted traffic signatures.',
-    is_high_freq_burst: 'Binary flag for high-frequency burst traffic patterns (potential DDoS indicator).',
-    log_inter_arrival: 'Log-transformed inter-arrival time to reduce skewness in timing analysis.',
+    PC1: 'Principal Component 1: Explains the highest variance in structural traffic volume and latency.',
+    PC2: 'Principal Component 2: Captures secondary variance typically associated with protocol and port configurations.',
+    PC3: 'Principal Component 3: Represents deeper frequency/spectral anomalies and burst variance.',
+    PC4: 'Principal Component 4: Encodes non-linear network timing structures isolated by the quantum map.',
+    PC5: 'Principal Component 5: Minor latent feature highlighting subtle payload variations.',
+    PC6: 'Principal Component 6: Residual orthogonal variance trace.',
+    PC7: 'Principal Component 7: Low-impact dense clustering parameter.',
+    PC8: 'Principal Component 8: Lowest-variance orthogonal state feature.',
 };
 
 const featureColors: Record<string, string> = {
-    packet_size: '#00897B', inter_arrival_time: '#00897B', packet_count_5s: '#00897B',
-    mean_packet_size: '#00897B', packet_size_ratio: '#00897B',
-    src_port: '#F9A825', dst_port: '#F9A825', port_risk_score: '#F9A825',
-    protocol_type_TCP: '#F9A825',
-    spectral_entropy: '#9333EA', frequency_band_energy: '#9333EA',
-    entropy_energy_ratio: '#9333EA', log_inter_arrival: '#9333EA',
-    is_high_freq_burst: '#EF4444',
+    PC1: '#9333EA', PC2: '#00897B', PC3: '#F9A825',
+    PC4: '#EF4444', PC5: '#3B82F6', PC6: '#10B981',
+    PC7: '#F59E0B', PC8: '#8B5CF6',
 };
 
 export default function Explainability({ state, updateState }: Props) {

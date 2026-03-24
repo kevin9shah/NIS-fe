@@ -13,9 +13,7 @@ interface Props {
 }
 
 const algorithms = [
-    { id: 'random_forest', label: 'Random Forest', icon: '🌲' },
-    { id: 'xgboost', label: 'XGBoost', icon: '⚡' },
-    { id: 'gradient_boosting', label: 'Gradient Boosting', icon: '📈' },
+    { id: 'xgboost', label: 'XGBoost (Recommended)', icon: '⚡' },
 ];
 
 export default function Training({ state, updateState }: Props) {
