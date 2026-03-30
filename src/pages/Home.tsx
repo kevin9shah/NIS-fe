@@ -235,6 +235,51 @@ export default function Home({ state, updateState }: Props) {
                     )}
                 </div>
             </div>
+
+            {/* Q-SAND Pipeline & Approach Explanation Section */}
+            <div className="mt-20 border-t border-border/50 pt-16">
+                <div className="text-center mb-16">
+                    <h2 className="text-3xl font-bold text-white mb-4">How Q-SAND Works</h2>
+                    <p className="text-slate-400 max-w-2xl mx-auto">
+                        An advanced, quantum-inspired pipeline for real-time network anomaly detection.
+                    </p>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    {/* Step 1 */}
+                    <div className="bg-card rounded-2xl p-8 border border-border hover:border-teal/30 transition-colors">
+                        <div className="w-12 h-12 rounded-xl bg-teal/10 flex items-center justify-center text-teal text-xl mb-6">
+                            1
+                        </div>
+                        <h3 className="text-xl font-bold text-white mb-3">XGBoost Classification</h3>
+                        <p className="text-slate-400 text-sm leading-relaxed">
+                            The core model relies on <strong>XGBoost</strong>, an industry-standard gradient boosting algorithm. It analyzes packet features (e.g., source port, payload length, flags) and computes a raw <em>anomaly probability</em> (0.0 to 1.0) for every packet. It handles complex, non-linear relationships in tabular network data with extreme speed and accuracy.
+                        </p>
+                    </div>
+
+                    {/* Step 2 */}
+                    <div className="bg-card rounded-2xl p-8 border border-border border-teal/20 shadow-[0_0_30px_rgba(0,137,123,0.05)]">
+                        <div className="w-12 h-12 rounded-xl bg-teal flex items-center justify-center text-white text-xl mb-6 shadow-lg shadow-teal/30">
+                            2
+                        </div>
+                        <h3 className="text-xl font-bold text-white mb-3">QTTA Dynamic Thresholding</h3>
+                        <p className="text-slate-400 text-sm leading-relaxed">
+                            Instead of a rigid static anomaly threshold (like 0.50), Q-SAND uses the <strong>Quantum Tunneling Threshold Adapter (QTTA)</strong>. It monitors the recent network <em>Alert Pressure</em> against the historical <em>Noise Floor</em>. When stealthy "low-and-slow" attacks build up, QTTA dynamically lowers its threshold, allowing the anomaly to 'tunnel' through and trigger an alert while suppressing normal noise.
+                        </p>
+                    </div>
+
+                    {/* Step 3 */}
+                    <div className="bg-card rounded-2xl p-8 border border-border hover:border-teal/30 transition-colors">
+                        <div className="w-12 h-12 rounded-xl bg-teal/10 flex items-center justify-center text-teal text-xl mb-6">
+                            3
+                        </div>
+                        <h3 className="text-xl font-bold text-white mb-3">XAI Explainability</h3>
+                        <p className="text-slate-400 text-sm leading-relaxed">
+                            Q-SAND doesn't just detect threats; it explains them. Using <strong>SHAP (SHapley Additive exPlanations)</strong> and <strong>Partial Dependence Plots (PDP)</strong>, the system provides game-theoretic feature attribution. Analysts can instantly see precisely which features (e.g., sudden port changes or volume spikes) caused a packet to be classified as malicious.
+                        </p>
+                    </div>
+                </div>
+            </div>
         </div>
     );
 }

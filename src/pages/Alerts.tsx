@@ -34,9 +34,9 @@ export default function Alerts({ state }: Props) {
     const qttaOnly = predictions.filter((p: any) => p.qtta_prediction === 1 && p.static_prediction === 0).length;
 
     const exportAlerts = () => {
-        const headers = ['Index', 'Anomaly Score', 'QTTA Threshold', 'Threat Level', 'Tunneling Prob', 'Alert Pressure'];
+        const headers = ['Index', 'Anomaly Score', 'QTTA Threshold', 'Threat Level', 'Tunneling Prob', 'Alert Pressure', 'Static Caught', 'QTTA Caught'];
         const rows = alerts.map((a: any) =>
-            [a.index, a.anomaly_score, a.qtta_threshold, a.threat_level, a.tunneling_prob, a.alert_pressure].join(',')
+            [a.index, a.anomaly_score, a.qtta_threshold, a.threat_level, a.tunneling_prob, a.alert_pressure, a.static_prediction === 1 ? 'YES' : 'NO', a.qtta_prediction === 1 ? 'YES' : 'NO'].join(',')
         );
         const csv = [headers.join(','), ...rows].join('\n');
         const blob = new Blob([csv], { type: 'text/csv' });
@@ -93,10 +93,20 @@ export default function Alerts({ state }: Props) {
                                 <div className="flex items-center gap-3">
                                     <ThreatBadge level={alert.threat_level} />
                                     <div>
-                                        <p className="text-sm font-semibold text-white">
+                                        <p className="text-sm font-semibold text-white mb-2">
                                             Packet #{alert.index} — {alert.threat_level} Threat Detected
                                         </p>
-                                        <p className="text-xs text-slate-500 mt-1 font-mono">
+                                        <div className="flex gap-2 mb-2">
+                                            {alert.static_prediction === 1 ? (
+                                                <span className="px-2 py-0.5 rounded bg-red-900/40 text-red-400 text-[10px] font-bold border border-red-700/50">STATIC: CAUGHT</span>
+                                            ) : (
+                                                <span className="px-2 py-0.5 rounded bg-slate-800 text-slate-500 text-[10px] font-bold border border-slate-700">STATIC: MISSED</span>
+                                            )}
+                                            {alert.qtta_prediction === 1 && (
+                                                <span className="px-2 py-0.5 rounded bg-teal-900/40 text-teal text-[10px] font-bold border border-teal/50 shadow-[0_0_8px_rgba(0,137,123,0.2)]">QTTA: CAUGHT</span>
+                                            )}
+                                        </div>
+                                        <p className="text-xs text-slate-500 font-mono">
                                             Score: {alert.anomaly_score.toFixed(4)} | Threshold: {alert.qtta_threshold.toFixed(4)} | T: {alert.tunneling_prob.toFixed(4)}
                                         </p>
                                     </div>

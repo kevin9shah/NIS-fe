@@ -95,10 +95,18 @@ export default function Explainability({ state, updateState }: Props) {
                                 </Bar>
                             </BarChart>
                         </ResponsiveContainer>
-                        <div className="flex gap-4 mt-4 justify-center text-xs">
+                        <div className="flex gap-4 mt-4 justify-center text-xs mb-4">
                             <span className="flex items-center gap-1"><span className="w-3 h-3 rounded bg-teal inline-block" /> Traffic Volume</span>
                             <span className="flex items-center gap-1"><span className="w-3 h-3 rounded bg-gold inline-block" /> Port/Protocol</span>
                             <span className="flex items-center gap-1"><span className="w-3 h-3 rounded bg-purple-600 inline-block" /> Spectral</span>
+                        </div>
+                        <div className="mt-4 p-4 bg-dark rounded-lg border border-border/50">
+                            <h4 className="text-sm font-semibold text-teal-light mb-2">How to read this plot:</h4>
+                            <p className="text-xs text-slate-400 leading-relaxed">
+                                This plot shows the <strong>overall impact</strong> of each feature on the model's predictions across all packets. 
+                                It uses the mean absolute SHAP value. A longer bar means that, on average, this feature plays a larger role in 
+                                deciding whether a packet is normal or anomalous. Features at the top are your most critical indicators of network behavior.
+                            </p>
                         </div>
                     </div>
 
@@ -127,10 +135,20 @@ export default function Explainability({ state, updateState }: Props) {
                                     </div>
                                 ))}
                             </div>
-                            <div className="flex items-center justify-center gap-4 mt-3 text-xs text-slate-500">
+                            <div className="flex items-center justify-center gap-4 mt-3 text-xs text-slate-500 mb-4">
                                 <span className="flex items-center gap-1"><span className="w-8 h-3 rounded" style={{ background: 'rgba(59, 130, 246, 0.7)' }} /> Reduces anomaly</span>
                                 <span className="flex items-center gap-1"><span className="w-8 h-3 rounded" style={{ background: 'rgba(239, 68, 68, 0.7)' }} /> Increases anomaly</span>
                             </div>
+                        </div>
+                        <div className="mt-4 p-4 bg-dark rounded-lg border border-border/50">
+                            <h4 className="text-sm font-semibold text-teal-light mb-2">How to read this matrix:</h4>
+                            <p className="text-xs text-slate-400 leading-relaxed">
+                                This heatmap provides a <strong>packet-by-packet breakdown</strong> for a sample of 50 packets. 
+                                Each row represents a single network packet, and the columns represent individual features. 
+                                <strong className="text-red-400"> Red</strong> indicates that the feature's value pushed the model to flag the packet as an anomaly. 
+                                <strong className="text-blue-400"> Blue</strong> indicates it pushed the model towards normal. 
+                                The deeper the color, the stronger the push. This helps you understand <em>why</em> a specific packet was flagged.
+                            </p>
                         </div>
                     </div>
 
@@ -156,6 +174,12 @@ export default function Explainability({ state, updateState }: Props) {
                                     </ResponsiveContainer>
                                 </div>
                             ))}
+                        </div>
+                        <div className="mt-6 p-4 bg-dark rounded-lg border border-border/50">
+                            <h4 className="text-sm font-semibold text-teal-light mb-2">How to read PDP curves:</h4>
+                            <p className="text-xs text-slate-400 leading-relaxed">
+                                Partial Dependence Plots (PDP) isolate exactly <strong>how the value of a specific feature changes the probability of an anomaly</strong>, assuming all other features remain at their average values. For example, if the line spikes upward as the X-axis increases, it means higher values of that feature directly increase the likelihood of a threat.
+                            </p>
                         </div>
                     </div>
 

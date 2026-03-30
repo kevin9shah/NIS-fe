@@ -102,11 +102,40 @@ export default function Detection({ state, updateState }: Props) {
                         </div>
                     ))}
                 </div>
-                <button onClick={handleDetect} disabled={loading || !state.modelId}
-                    className="mt-4 px-8 py-3 rounded-xl bg-teal hover:bg-teal/80 text-white font-semibold transition-all disabled:opacity-50 flex items-center gap-2">
-                    {loading ? <><div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" /> Running...</> : '⚛ Run Detection'}
-                </button>
-                {error && <p className="mt-2 text-red-400 text-sm">❌ {error}</p>}
+                <div className="flex flex-col md:flex-row items-start md:items-center justify-between mt-6">
+                    <button onClick={handleDetect} disabled={loading || !state.modelId}
+                        className="px-8 py-3 rounded-xl bg-teal hover:bg-teal/80 text-white font-semibold transition-all disabled:opacity-50 flex items-center gap-2">
+                        {loading ? <><div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" /> Running...</> : '⚛ Run Detection'}
+                    </button>
+                    <p className="text-sm text-slate-400 mt-3 md:mt-0 italic">
+                        * Note: You must click "Run Detection" to recalculate results after changing parameters.
+                    </p>
+                </div>
+                {error && <p className="mt-4 text-red-400 text-sm">❌ {error}</p>}
+            </div>
+
+            {/* Explanation of Classification Logic */}
+            <div className="bg-dark rounded-xl border border-border/50 p-6 mb-8 mt-4 shadow-sm">
+                <h3 className="text-lg font-semibold text-teal-light mb-3">How is the Anomaly Classified?</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-sm">
+                    <div className="p-4 bg-card rounded-lg border border-border">
+                        <h4 className="font-bold text-white mb-2 pb-2 border-b border-border/50">1. Static Decision (Standard ML)</h4>
+                        <p className="text-slate-400 mb-2">A traditional system uses a rigid, static rule.</p>
+                        <div className="bg-dark p-2 rounded font-mono text-center text-red-400 border border-red-900/30">
+                            Anomaly if: Score {'>'} {baseThreshold.toFixed(2)} (Base κ₀)
+                        </div>
+                    </div>
+                    <div className="p-4 bg-card rounded-lg border border-teal/20 shadow-[0_0_15px_rgba(0,137,123,0.05)]">
+                        <h4 className="font-bold text-teal mb-2 pb-2 border-b border-border/50">2. QTTA Decision (Dynamic)</h4>
+                        <p className="text-slate-400 mb-2">QTTA lowers the threshold dynamically during attacks.</p>
+                        <div className="bg-dark p-2 rounded font-mono text-center text-teal border border-teal/20 mb-2">
+                            Threshold (κ) = {baseThreshold.toFixed(2)} × (1 - {alpha.toFixed(2)} × T)
+                        </div>
+                        <div className="bg-dark p-2 rounded font-mono text-center text-teal border border-teal/20">
+                            Anomaly if: Score {'>'} Threshold (κ)
+                        </div>
+                    </div>
+                </div>
             </div>
 
             {predictions.length > 0 && (
@@ -179,7 +208,7 @@ export default function Detection({ state, updateState }: Props) {
                             <table className="w-full text-sm">
                                 <thead>
                                     <tr className="border-b border-border text-slate-500 text-xs uppercase">
-                                        {['Index', 'Anomaly Score', 'QTTA Threshold', 'Tunneling P', 'Alert Pressure', 'Threat Level'].map(h => (
+                                        {['Index', 'Anomaly Score', 'QTTA Threshold', 'Tunneling P', 'Static Decision (w/o QTTA)', 'QTTA Decision (w QTTA)', 'Threat Level'].map(h => (
                                             <th key={h} className="px-4 py-3 text-left">{h}</th>
                                         ))}
                                     </tr>
@@ -191,7 +220,20 @@ export default function Detection({ state, updateState }: Props) {
                                             <td className="px-4 py-2 font-mono">{p.anomaly_score.toFixed(4)}</td>
                                             <td className="px-4 py-2 font-mono">{p.qtta_threshold.toFixed(4)}</td>
                                             <td className="px-4 py-2 font-mono">{p.tunneling_prob.toFixed(4)}</td>
-                                            <td className="px-4 py-2 font-mono">{p.alert_pressure.toFixed(4)}</td>
+                                            <td className="px-4 py-2">
+                                                {p.static_prediction === 1 ? (
+                                                    <span className="px-2 py-1 rounded bg-red-900/50 text-red-400 text-xs font-bold border border-red-700/50">ANOMALY</span>
+                                                ) : (
+                                                    <span className="px-2 py-1 rounded bg-slate-800 text-slate-400 text-xs font-bold border border-slate-700">NORMAL</span>
+                                                )}
+                                            </td>
+                                            <td className="px-4 py-2">
+                                                {p.qtta_prediction === 1 ? (
+                                                    <span className="px-2 py-1 rounded bg-teal-900/50 text-teal border border-teal/50 text-xs font-bold shadow-[0_0_10px_rgba(0,137,123,0.2)]">ANOMALY</span>
+                                                ) : (
+                                                    <span className="px-2 py-1 rounded bg-slate-800 text-slate-400 text-xs font-bold border border-slate-700">NORMAL</span>
+                                                )}
+                                            </td>
                                             <td className="px-4 py-2"><ThreatBadge level={p.threat_level} /></td>
                                         </tr>
                                     ))}
